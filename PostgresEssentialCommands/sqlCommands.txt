@@ -1,0 +1,10 @@
+create table login (sr_no SERIAL, voter_id varchar(10) UNIQUE PRIMARY KEY NOT NULL, password varchar(100) NOT NULL,
+check (length(voter_id) = 10), check(password NOT LIKE '%[^a-zA-Z0-9]%'), check(length(password) >= 8 )); 
+
+TRUNCATE TABLE login;
+
+TRUNCATE TABLE voter_details;
+
+ALTER SEQUENCE login_sr_no_seq RESTART WITH 1;
+
+ALTER SEQUENCE voter_details_sr_no_seq RESTART WITH 1;

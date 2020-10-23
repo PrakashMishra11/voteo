@@ -1,0 +1,12 @@
+.input {
+  border-radius: 20px;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #999;
+  outline: none;
+  width: 16em;
+}
+
+.registerhead {
+  font-family: "Trebuchet MS", "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, sans-serif;
+}
