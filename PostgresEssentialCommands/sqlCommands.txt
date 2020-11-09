@@ -8,3 +8,7 @@ TRUNCATE TABLE voter_details;
 ALTER SEQUENCE login_sr_no_seq RESTART WITH 1;
 
 ALTER SEQUENCE voter_details_sr_no_seq RESTART WITH 1;
+
+UPDATE vote_result SET total_votes = 0;
+
+INSERT INTO vote_result(party_name, candidate) VALUES('BJP', 'Parth Kodape');

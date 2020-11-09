@@ -25,6 +25,24 @@ class Register extends React.Component {
   onPasswordChange = (event) => {
     this.setState({password: event.target.value});
   }
+  checkOTP = async (confirmationResult) => {
+    var code = window.prompt('Enter OTP sent to the mobile number registered with your aadhar card');
+    await confirmationResult.confirm(code)
+      .then(function (result) {
+        // User signed in successfully.
+        var user = result.user;
+        console.log(user);
+        // ...
+        // console.log('User should be signed in');
+        // this.user = user;
+        return user;
+    }).catch(function (error) {
+      // User couldn't sign in (bad verification code?)
+      // ...
+      window.alert('Invalid OTP');
+      this.checkOTP(confirmationResult);
+    });
+  }
   setUpRecaptcha = () => {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
       'size': 'invisible',
@@ -48,21 +66,10 @@ class Register extends React.Component {
           // SMS sent. Prompt user to type the code from the message, then sign the
           // user in with confirmationResult.confirm(code).
           window.confirmationResult = confirmationResult;
-          var code = window.prompt('Enter OTP sent to the mobile number registered with your aadhar card');
-          await confirmationResult.confirm(code)
-            .then(function (result) {
-              // User signed in successfully.
-              var user = result.user;
-              console.log(user);
-              // ...
-              // console.log('User should be signed in');
-              // this.user = user;
-              status = true;
-          }).catch(function (error) {
-            // User couldn't sign in (bad verification code?)
-            // ...
-            window.alert('Invalid OTP');
-          });
+          let user = await this.checkOTP(confirmationResult);
+          if (user) {
+            status = true;
+          }
         }).catch(function (error) {
           // Error; SMS not sent
           // ...
@@ -86,7 +93,7 @@ class Register extends React.Component {
     let votn = document.getElementById('votn');
     let pass = document.getElementById('pass');
     let cpass = document.getElementById('cpass');
-    if (this.state.otpDidVerify && adhar.value.length > 0 && votn.value.length > 0 && pass.value.length > 0 && cpass.value.length > 0) {
+    if (this.state.otpDidVerify && votn.value.length > 0 && pass.value.length > 0 && cpass.value.length > 0) {
         this.vid = votn;
         if (pass.value === cpass.value) {
             fetch('http://localhost:3001/register', {
@@ -116,7 +123,7 @@ class Register extends React.Component {
           window.alert('Passwords do not match!');
         }
     }
-    if (!this.state.otpDidVerify && adhar.value.length > 0 && votn.value.length > 0 && pass.value.length > 0 && cpass.value.length > 0) {
+    if (!this.state.otpDidVerify && adhar.value.length > 0) {
       window.alert('Please verify Aadhar Number first!');
     }
   }
@@ -141,7 +148,6 @@ class Register extends React.Component {
               vbtn.classList.remove('bg-gray', 'hover-bg-mid-gray', 'pointer', 'link');
               vbtn.classList.add('bg-light-green');
               vbtn.innerHTML = "✔";
-              adhar.disabled = true;
             }
             else {
               this.setState({otpDidVerify: false});

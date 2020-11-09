@@ -1,9 +1,10 @@
 import React from 'react';
-import Navigation from './components/Navigation/Navigation';
 import UserProfile from './components/UserProfile/UserProfile';
 import VotingPage from './components/VotingPage/VotingPage';
-import Signin from './components/Signin/Signin';
+import Navigation from './components/Navigation/Navigation';
 import Register from './components/Register/Register';
+import Signin from './components/Signin/Signin';
+import Home from './components/Home/Home';
 import { ausers } from './aadharUsers';
 import './App.css';
 
@@ -11,14 +12,17 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
-      route: 'Signin',
+      route: 'Home',
+      atHome: true,
       isSignedIn: false,
       weAreOnRegistration: false,
-      votingStart: false,
+      weAreOnVotingPage: false,
       UsersFromApi: [],
       // voted party could be updated here
       user: {
         id: '',
+        fn: '',
+        ln: '',
         an: '',
         vi: '',
         hasVoted: '',
@@ -39,6 +43,8 @@ class App extends React.Component {
   loadUser = (data) => {
     this.setState({user: {
       id: data.sr_no,
+      fn: data.name.split(" ")[0],
+      ln: data.name.split(" ")[1],
       an: data.aadhaar_no,
       vi: data.voter_id,
       hasVoted: data.vote_status,
@@ -52,39 +58,60 @@ class App extends React.Component {
 
   onRouteChange = (route) => {
     this.setState({route: route});
-    if (route === 'Signin') {
+    if (route === 'InHome') {
+      this.setState({atHome: true});
+      this.setState({isSignedIn: true});
+      this.setState({weAreOnRegistration: false});
+      this.setState({weAreOnVotingPage: false});
+    }
+    if (route === 'OutHome') {
+      this.setState({atHome: true});
       this.setState({isSignedIn: false});
       this.setState({weAreOnRegistration: false});
-      this.setState({votingStart: false});
+      this.setState({weAreOnVotingPage: false});
+    }
+    if (route === 'Signin') {
+      this.setState({atHome: false});
+      this.setState({isSignedIn: false});
+      this.setState({weAreOnRegistration: false});
+      this.setState({weAreOnVotingPage: false});
     }
     if (route === 'Register') {
+      this.setState({atHome: false});
       this.setState({isSignedIn: false});
       this.setState({weAreOnRegistration: true});
-      this.setState({votingStart: false});
+      this.setState({weAreOnVotingPage: false});
     }
     if (route === 'UserProfile') {
+      this.setState({atHome: false});
       this.setState({isSignedIn: true});
       this.setState({weAreOnRegistration: false});
-      this.setState({votingStart: false});
+      this.setState({weAreOnVotingPage: false});
     }
     if (route === 'VotingPage') {
+      this.setState({atHome: false});
       this.setState({isSignedIn: true});
       this.setState({weAreOnRegistration: false});
-      this.setState({votingStart: true});
+      this.setState({weAreOnVotingPage: true});
     }
   }
 
-  uponVoting = () => {
+  uponVoting = (party) => {
     fetch('http://localhost:3001/vote', {
       method: 'put',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
-        vi: this.state.user.vi
+        vi: this.state.user.vi,
+        party: party
       })
     })
       .then(res => res.json())
       .then(status => {
         this.setState(Object.assign(this.state.user, { hasVoted: status }));
+        if (this.state.user.hasVoted === 'success') {
+          window.alert('ThankYou for Voting!');
+          this.onRouteChange('VotingPage');
+        }
       })
   }
 
@@ -106,6 +133,8 @@ class App extends React.Component {
           onRouteChange={this.onRouteChange}
           isSignedIn={this.state.isSignedIn}
           weAreOnRegistration={this.state.weAreOnRegistration}
+          weAreOnVotingPage = { this.state.weAreOnVotingPage }
+          atHome = { this.state.atHome }
         />
           { this.state.route === 'Signin'
             ? <Signin
@@ -120,10 +149,15 @@ class App extends React.Component {
               : ( this.state.route === 'VotingPage'
                 ? <VotingPage
                     uponVoting={ this.uponVoting }
+                    voteStatus = { this.state.user.hasVoted }
+                    voter = { this.state.user.fn }
                   />
-                : <div>
-                    <UserProfile />
-                  </div>
+                : ( this.state.route === 'UserProfile'
+                  ? <UserProfile userInfo = { this.state.user }/>
+                  : <Home
+                      onRouteChange={this.onRouteChange}
+                    />
+                  )
                 )
               )
           }

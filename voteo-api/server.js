@@ -87,21 +87,75 @@ app.post('/register', (req, res) => {
 //   }
 // })
 
+app.get('/getPartyInfo', (req, res) => {
+  db.select('party_name', 'candidate').from('vote_result').then(data => res.json(data)).catch(error => res.status(400).json('There are no political parties available!'));
+})
+
 app.put('/vote', (req, res) => {
-  const { vi } = req.body;
-  db('voter_details').where('voter_id', '=', vi)
-  .update({
-    vote_status: true
-  })
-    .returning('vote_status')
-    .then(status => res.json(status))
-    .catch(err => res.status(400).json('vote not registered'))
+  const { vi, party } = req.body;
+  const initCount = db.select('total_votes').from('vote_result').where('party_name', '=', party);
+  // db.transaction(trx => {
+  //   trx.increment('total_votes', 1)
+  //     .into('vote_result').where('party_name', '=', party)
+  //     .returning('total_votes')
+  //     .then(total => {
+  //       return trx('voter_details').where('voter_id', '=', vi)
+  //       .update({
+  //         vote_status: true
+  //       })
+  //         .returning('vote_status')
+  //         .then(status => res.json(status))
+  //     })
+  //     .then(trx.commit)
+  //     .catch(trx.rollback)
+
+  db.transaction(trx => {
+    trx.increment('total_votes', 1)
+      .into('vote_result').where('party_name', '=', party)
+      .returning('total_votes')
+      .then(total => {
+        return trx('voter_details').where('voter_id', '=', vi)
+        .update({
+          vote_status: true
+        })
+          .returning('vote_status')
+          .then(status => res.json(status))
+      })
+      .then(trx.commit)
+      .catch(trx.rollback)
+    })
+
+    // .then(total => {
+    //   if (total > initCount) {
+    //     db('voter_details').where('voter_id', '=', vi)
+    //     .update({
+    //       vote_status: true
+    //     })
+    //       .returning('vote_status')
+    //       .then(status => res.json(status))
+    //       .catch(err => res.status(400).json('vote not registered'))
+    //   }
+    //   else {
+    //     res.status(404).json('error occurred while voting')
+    //   }
+    // })
+
+    // db('vote_result').where('party_name', '=', party)
+    //   .increment('total_votes', 1)
+    //   .returning('total_votes')
+
+  // db('voter_details').where('voter_id', '=', vi)
+  // .update({
+  //   vote_status: true
+  // })
+  //   .returning('vote_status')
+  //   .then(status => res.json('success'))
+  //   .catch(err => res.status(400).json('vote not registered'))
 })
 
 app.listen(3001, () => {
   console.log('app is running on port 3001');
 })
-
 
 
 

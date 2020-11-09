@@ -1,0 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&family=Syne+Mono&display=swap');
+
+#profileHead {
+  margin-top: 50px;
+    text-align: center;
+    font-style: oblique;
+    font-size: 35px;
+    font-family: 'Syne Mono', monospace;
+}
+
+.container {
+    background-color: #c9ad8a;
+    padding: auto;
+    margin: 2vh auto;
+    width: 40vw;
+    box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+    border-radius: 10px;
+    height: 85vh;
+    font-family: 'Syne Mono', monospace;
+    font-style: unset;
+}
+
+.text {
+    width: 50%;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 15px;
+    background-color: rgb(255, 249, 249);
+    color: rgb(10, 10, 10);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.number {
+    width: 50%;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 15px;
+    background-color: rgb(255, 249, 249);
+    color: rgb(10, 10, 10);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.email {
+    width: 50%;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 15px;
+    background-color: rgb(255, 249, 249);
+    color: rgb(10, 10, 10);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+label {
+    justify-content: right;
+    display: inline-block;
+    width: 30%;
+    text-align: center;
+    padding: 10px;
+}
+
+#label {
+  text-align: right;
+}

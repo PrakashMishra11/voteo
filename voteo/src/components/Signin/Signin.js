@@ -31,7 +31,7 @@ class Signin extends React.Component {
         .then(user => {
           if (user.sr_no) {
             this.props.loadUser(user);
-            this.props.onRouteChange('UserProfile');
+            this.props.onRouteChange('InHome');
           }
           else {
             window.alert('Voting ID or Password is Incorrect!');
