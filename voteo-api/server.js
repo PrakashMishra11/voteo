@@ -93,21 +93,7 @@ app.get('/getPartyInfo', (req, res) => {
 
 app.put('/vote', (req, res) => {
   const { vi, party } = req.body;
-  const initCount = db.select('total_votes').from('vote_result').where('party_name', '=', party);
-  // db.transaction(trx => {
-  //   trx.increment('total_votes', 1)
-  //     .into('vote_result').where('party_name', '=', party)
-  //     .returning('total_votes')
-  //     .then(total => {
-  //       return trx('voter_details').where('voter_id', '=', vi)
-  //       .update({
-  //         vote_status: true
-  //       })
-  //         .returning('vote_status')
-  //         .then(status => res.json(status))
-  //     })
-  //     .then(trx.commit)
-  //     .catch(trx.rollback)
+  // const initCount = db.select('total_votes').from('vote_result').where('party_name', '=', party);
 
   db.transaction(trx => {
     trx.increment('total_votes', 1)
@@ -119,38 +105,11 @@ app.put('/vote', (req, res) => {
           vote_status: true
         })
           .returning('vote_status')
-          .then(status => res.json(status))
+          .then(status => res.json(status[0]))
       })
       .then(trx.commit)
       .catch(trx.rollback)
     })
-
-    // .then(total => {
-    //   if (total > initCount) {
-    //     db('voter_details').where('voter_id', '=', vi)
-    //     .update({
-    //       vote_status: true
-    //     })
-    //       .returning('vote_status')
-    //       .then(status => res.json(status))
-    //       .catch(err => res.status(400).json('vote not registered'))
-    //   }
-    //   else {
-    //     res.status(404).json('error occurred while voting')
-    //   }
-    // })
-
-    // db('vote_result').where('party_name', '=', party)
-    //   .increment('total_votes', 1)
-    //   .returning('total_votes')
-
-  // db('voter_details').where('voter_id', '=', vi)
-  // .update({
-  //   vote_status: true
-  // })
-  //   .returning('vote_status')
-  //   .then(status => res.json('success'))
-  //   .catch(err => res.status(400).json('vote not registered'))
 })
 
 app.listen(3001, () => {

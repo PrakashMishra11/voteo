@@ -108,7 +108,7 @@ class App extends React.Component {
       .then(res => res.json())
       .then(status => {
         this.setState(Object.assign(this.state.user, { hasVoted: status }));
-        if (this.state.user.hasVoted === 'success') {
+        if (this.state.user.hasVoted === true) {
           window.alert('ThankYou for Voting!');
           this.onRouteChange('VotingPage');
         }
