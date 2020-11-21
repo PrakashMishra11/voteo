@@ -36,7 +36,7 @@ class Register extends React.Component {
   }
   onRegSubmit = async () => {
     this.setUpRecaptcha();
-    var phoneNumber = "+919340153654" // "+91" + this.userPhone;
+    var phoneNumber = "+91" + this.userPhone;
     var appVerifier = window.recaptchaVerifier;
     // appVerifier.render().then(function(widgetId) {
     //   window.recaptchaWidgetId = widgetId;
